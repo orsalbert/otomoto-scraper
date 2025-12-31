@@ -1,0 +1,23 @@
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environment directories
+carwow/
+*.log
+
+# Ignore downloaded files
+data/html_snapshots/*.html
+data/raw_csv/*.csv
+data/processed_csv/*.csv
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore local files
+misc/
+
+# Ignore IDE files
+*.code-workspace
+
+
