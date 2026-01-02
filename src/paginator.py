@@ -1,12 +1,7 @@
 from parser.json_ld_parser import parse_json_ld
-from parser.graphql_parser import parse_graphql
-from parser.merger import merge_jsonld_and_graphql
 from pathlib import Path
-import os
 from typing import List
 import requests
-import pandas as pd
-
 from fetcher import detect_last_page, fetch_html, is_zero_results, polite_sleep
 from url_builder import build_search_url
 
@@ -20,12 +15,6 @@ def save_html_snapshot(base_args: dict, html: str, page: int, output_dir: str):
         / f"{base_args['brand'].lower()}_{base_args['model'].lower()}_page_{page}.html"
     )
     path.write_text(html, encoding="utf-8")
-
-
-def parse_search_page(html: str) -> list[dict]:
-    jsonld = parse_json_ld(html)
-    graphql = parse_graphql(html)
-    return merge_jsonld_and_graphql(jsonld, graphql)
 
 
 def iterate_search_pages(
@@ -45,7 +34,7 @@ def iterate_search_pages(
 
     for page in range(1, max_pages + 1):
         url = build_search_url(page=page, **base_args)
-        print(f"[INFO] Fetching page {page}: {url}")
+        print(f"[INFO] Fetching page {page}")
 
         html = fetch_html(url, session)
 
@@ -87,6 +76,16 @@ def iterate_search_pages(
 
 if __name__ == "__main__":
 
+    import os
+    import pandas as pd
+    from parser.graphql_parser import parse_graphql
+    from parser.merger import merge_jsonld_and_graphql
+
+    def parse_search_page(html: str) -> list[dict]:
+        jsonld = parse_json_ld(html)
+        graphql = parse_graphql(html)
+        return merge_jsonld_and_graphql(jsonld, graphql)
+
     save_snapshots = input("Save HTML snapshots? (y/n): ").strip().lower() == "y"
 
     cars = [
@@ -112,8 +111,8 @@ if __name__ == "__main__":
 
     pages = []
 
-    for model in cars:
-        base_args.update(model)
+    for car in cars:
+        base_args.update(car)
 
         session = requests.Session()
 

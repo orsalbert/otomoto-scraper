@@ -49,7 +49,7 @@ def is_zero_results(html: str) -> bool:
 
 # def detect_last_page(html: str) -> int:
 def detect_last_page(html: str):
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, "html.parser")
 
     og_url_tag = soup.find("meta", property="og:url")
 

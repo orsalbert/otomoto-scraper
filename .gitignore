@@ -4,9 +4,8 @@ __pycache__/
 
 # Ignore virtual environment directories
 carwow/
-*.log
 
-# Ignore downloaded files
+# Ignore data files
 data/html_snapshots/*
 data/raw_csv/*
 data/processed_csv/*
@@ -16,8 +15,9 @@ data/json_parm/*
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Ignore local files
+# Ignore miscellaneous files
 misc/
+*.log
 
 # Ignore IDE files
 *.code-workspace
