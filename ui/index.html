@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Otomoto Scraper UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Roboto; 
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.55);
+            z-index: -1;
+        } */
+
+        form {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            
+        }
+
+        fieldset { 
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #0000003e;
+            border-radius: 5px;
+        }
+
+        legend {
+            font-family: Roboto;
+            padding: 0 10px;
+            text-transform: uppercase;
+            /* font-weight: bold; */
+            font-size: 19px;
+        }
+
+        label { 
+            display: block;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .input-container {
+            border-radius: 8px;
+            font-family: Roboto;
+            padding-left: 7px;
+            text-align: left;
+            height: 27px;
+            width: 100px;
+            border: none;
+        }
+
+        .parm-tag {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 52%;
+        }
+
+        .rounded-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            /* display: flex; */
+            /* align-items: stretch; */
+            vertical-align: -1px;
+            border-radius: 5px;
+            width: 15px;
+            height: 15px;
+            /* border: 2px solid #007bff; */
+            background-color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .rounded-checkbox:hover {
+            background-color: #d6d6d6;
+            }
+
+        .rounded-checkbox:checked {
+            background-color: #223D3C;
+        }
+        
+
+        .button-container {
+            border-radius: 15px;
+            width: 100px;
+            height: 50px;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border: none;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .button-container:hover {
+            background-color: #d6d6d6;
+            }
+        
+        .button-container:active {
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+            transform: scale(1);
+            }
+            50% {
+            transform: scale(1.1);
+            }
+        }
+
+        ::-webkit-scrollbar { /* Chrome, Safari, Opera */
+            display: none;
+        }
+
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+
+    </style>
+</head>
+<body>
+
+<div style="width: 96%; display: flex; flex-direction: column; align-items: end; justify-content: center; min-height: 100vh; transform: scale(0.95)">
+    <form id="scraperForm">
+
+        <fieldset>
+            <legend>Select car models</legend>
+
+            <label><input type="checkbox" checked name="cars" value="Volkswagen|Taigo" class="rounded-checkbox"> Volkswagen Taigo</label>
+            <label><input type="checkbox" checked name="cars" value="Seat|Ateca" class="rounded-checkbox"> Seat Ateca</label>
+            <label><input type="checkbox" checked name="cars" value="Ford|Kuga" class="rounded-checkbox"> Ford Kuga</label>
+            <label><input type="checkbox" checked name="cars" value="Skoda|Kamiq" class="rounded-checkbox"> Skoda Kamiq</label>
+            <label><input type="checkbox" checked name="cars" value="Renault|Kadjar" class="rounded-checkbox"> Renault Kadjar</label>
+            <label><input type="checkbox" checked name="cars" value="Suzuki|SX4-S-Cross" class="rounded-checkbox"> Suzuki SX4 S-Cross</label>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>Search parameters</legend>
+            
+            <div class="parm-tag">
+                <label>Year from:</label>
+                <input type="number" name="year_from" value="2019" class="input-container">
+            </div>
+
+            <div class="parm-tag">
+                <label>Year to:</label>
+                <input type="number" name="year_to" value="2022" class="input-container">
+            </div>
+
+            <div class="parm-tag">
+                <label>Price from:</label>
+                <input type="number" name="price_from" value="50000" class="input-container">
+            </div>
+
+            <div class="parm-tag">
+                <label>Price to:</label>
+                <input type="number" name="price_to" value="75000" class="input-container">
+            </div>
+
+            <div class="parm-tag">
+                <label>Mileage up to:</label>
+                <input type="number" name="mileage_to" value="150000" class="input-container">
+            </div>
+            
+            <div class="parm-tag">
+                <label>Fuel type:</label>
+                    <select name="fuel_type" class="input-container">
+                        <option value="petrol">Petrol</option>
+                        <option value="diesel">Diesel</option>
+                    </select>
+            </div>
+
+            <div class="parm-tag">
+                <label>Gearbox:</label>
+                    <select name="gearbox" class="input-container">
+                        <option value="manual">Manual</option>
+                        <option value="automatic">Automatic</option>
+                    </select>
+            </div>
+            
+            <label>
+                <input type="checkbox" name="accident_free" checked class="rounded-checkbox">
+                Accident-free only
+            </label>
+
+        </fieldset>
+
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <button type="submit" class="button-container">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+<pre id="status"></pre>
+
+<script>
+document.getElementById("scraperForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const cars = [];
+    for (const val of formData.getAll("cars")) {
+        const [brand, model] = val.split("|");
+        cars.push({ brand, model });
+    }
+
+    const payload = {
+        cars,
+        base_args: {
+            year_from: Number(formData.get("year_from")),
+            year_to: Number(formData.get("year_to")),
+            price_from: Number(formData.get("price_from")),
+            price_to: Number(formData.get("price_to")),
+            mileage_to: Number(formData.get("mileage_to")),
+            fuel_type: formData.get("fuel_type"),
+            gearbox: formData.get("gearbox"),
+            accident_free: formData.get("accident_free") === "on"
+        }
+    };
+
+    // document.getElementById("status").textContent = "Running scraper...";
+
+    const res = await fetch("http://127.0.0.1:5000/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+    document.getElementById("status").textContent = text;
+});
+</script>
+
+</body>
+</html>

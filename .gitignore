@@ -7,9 +7,11 @@ carwow/
 *.log
 
 # Ignore downloaded files
-data/html_snapshots/*.html
-data/raw_csv/*.csv
-data/processed_csv/*.csv
+data/html_snapshots/*
+data/raw_csv/*
+data/processed_csv/*
+data/json_parm/*
+!**/.gitkeep
 
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints/
