@@ -1,0 +1,25 @@
+# Core scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.3
+lxml>=5.1.0
+
+# Data handling
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Backend / UI trigger
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Config & utilities
+python-dateutil>=2.9.0
+pytz>=2024.1
+
+#progress/debugging
+tqdm>=4.66.0
+
+# Jupyter / analysis
+jupyterlab>=4.1.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0

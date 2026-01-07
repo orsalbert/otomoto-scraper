@@ -1,49 +1,71 @@
-from parser.json_ld_parser import parse_json_ld
 from pathlib import Path
 from typing import List
 import requests
-from fetcher import detect_last_page, fetch_html, is_zero_results, polite_sleep
+import urllib3
+from tqdm import tqdm
 from url_builder import build_search_url
+from fetcher import detect_last_page, fetch_html, is_zero_results, polite_sleep
+from parser.json_ld_parser import parse_json_ld
 
 
-def save_html_snapshot(base_args: dict, html: str, page: int, output_dir: str):
+def save_html_snapshot(html: str, page: int, output_dir: str, base_args: dict = {}):
     parent_dir = Path.cwd().parent
     full_path = parent_dir / Path(output_dir)
     full_path.mkdir(parents=True, exist_ok=True)
-    path = (
-        Path(full_path)
-        / f"{base_args['brand'].lower()}_{base_args['model'].lower()}_page_{page}.html"
-    )
+    if base_args:
+        path = (
+            Path(full_path)
+            / f"{base_args['brand'].lower()}_{base_args['model'].lower()}_page_{page}.html"
+        )
+    else:
+        path = Path(full_path) / f"page_{page}.html"
     path.write_text(html, encoding="utf-8")
 
 
 def iterate_search_pages(
-    base_args: dict,
     session: requests.Session,
+    base_args: dict = {},
+    input_url: str = "",
     max_pages: int = 10,
     save_snapshots: bool = False,
     snapshot_dir: str = "data/html_snapshots",
+    disable_tqdm=False,
 ) -> List[str]:
     """
     Fetch search result pages until stopping condition is met.
     Returns a list of HTML strings (one per page).
     """
+    pbar = tqdm(
+        desc="Pages fetched",
+        unit="page",
+        bar_format="{desc}: {n} [{elapsed}, {rate_fmt}]",
+        disable=disable_tqdm,
+    )
 
     pages_html = []
     detected_last_page = None
 
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     for page in range(1, max_pages + 1):
-        url = build_search_url(page=page, **base_args)
-        print(f"[INFO] Fetching page {page}")
+
+        pbar.update(1)
+
+        if input_url:
+            url = input_url + f"&page={page}"
+        else:
+            url = build_search_url(page=page, **base_args)
+
+        tqdm.write(f"[INFO] Fetching page {page}")
 
         html = fetch_html(url, session)
 
         if html is None:
-            print("[STOP] Fetch failed.")
+            tqdm.write("[STOP] Fetch failed.")
             break
 
         if is_zero_results(html):
-            print("[STOP] Zero results page detected.")
+            tqdm.write("[STOP] Zero results page detected.")
             break
 
         # Detect last page
@@ -63,14 +85,15 @@ def iterate_search_pages(
 
             else:
                 detected_last_page = detect_last_page(html) - 1
-                print(f"[INFO] Detected last page: {detected_last_page}")
+                tqdm.write(f"[INFO] Detected last page: {detected_last_page}")
 
         if detected_last_page is not None and page >= detected_last_page:
-            print("[STOP] Reached last page.")
+            tqdm.write("[STOP] Reached last page.")
             break
 
         polite_sleep()
 
+    pbar.close()
     return pages_html
 
 
@@ -116,12 +139,14 @@ if __name__ == "__main__":
 
         session = requests.Session()
 
-        pages += iterate_search_pages(
-            base_args=base_args,
-            session=session,
-            max_pages=10,
-            save_snapshots=save_snapshots,
-            snapshot_dir=f"data/html_snapshots/",
+        pages.extend(
+            iterate_search_pages(
+                base_args=base_args,
+                session=session,
+                max_pages=10,
+                save_snapshots=save_snapshots,
+                snapshot_dir=f"data/html_snapshots/",
+            )
         )
 
     print(f"\n[RESULT] Collected {len(pages)} pages.")

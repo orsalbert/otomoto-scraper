@@ -10,6 +10,8 @@ BRAND_MODEL_SLUGS = {
     ("ford", "kuga"): ("ford", "kuga"),
     ("suzuki", "sx4-s-cross"): ("suzuki", "sx4-s-cross"),
     ("honda", "hr-v"): ("honda", "hr-v"),
+    ("peugeot", "2008"): ("peugeot", "2008"),
+    ("opel", "grandland-x"): ("opel", "grandland-x"),
 }
 
 

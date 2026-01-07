@@ -186,6 +186,11 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         if col in df.columns:
             df[col] = df[col].str.lower()
 
+    # ---- date added and days passed ----
+    df["date_added"] = pd.to_datetime(df["date_added"])
+    df["current_date"] = pd.Timestamp.now(tz="Europe/Warsaw")
+    df["days_listed"] = (df["current_date"] - df["date_added"]).dt.days
+
     # ---- zone code ----
     df["zone_code"] = df["region"].map(zone_code).fillna("UNK")
 
@@ -275,6 +280,8 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     preferred_order = [
         "id",
         "date_added",
+        "current_date",
+        "days_listed",
         "title",
         "brand",
         "model",

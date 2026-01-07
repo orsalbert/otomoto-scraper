@@ -9,6 +9,7 @@ carwow/
 data/html_snapshots/*
 data/raw_csv/*
 data/processed_csv/*
+data/eval_csv/*
 data/json_parm/*
 !**/.gitkeep
 
