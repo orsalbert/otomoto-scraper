@@ -1,164 +1,141 @@
-## 🚗 Otomoto Used Car Market Analyzer
+## Hi, otomoto’s calling: Let’s scrape!
 
-A data-driven toolchain to **scrape, analyze, and evaluate used car listings from Otomoto.pl**, with the goal of identifying **fair prices, undervalued deals, and negotiation opportunities**.
+This project is a practical, end-to-end data engineering and analysis workflow built around one real-world problem:  **how to make better, data-driven decisions when buying a used car**.
 
-This project combines:
+It combines a lightweight frontend, a Python backend, web scraping, data normalization, and analytical notebooks into a single, coherent pipeline. The goal is not just to extract data, but to **build a usable dataset, transform it into insight, and act on it**.
 
-* Web scraping (BeautifulSoup + requests)
-* Structured data extraction (JSON-LD + embedded GraphQL)
-* Data normalization & deduplication
-* Exploratory data analysis in Jupyter
-* Price trend tracking
-* A lightweight HTML UI to configure and run scrapes
+Web scraping, backend development, data processing, and exploratory analysis — all in one place!
 
-## 🎯 Project Goals
+---
 
-The primary goal is **better buying decisions**.
+## Project goals
 
-Specifically, the project aims to:
+The main objectives of this project are:
 
-* Build a **clean, structured dataset** of comparable used car listings
-* Normalize key attributes (engine, trim, mileage, seller type)
-* Track **price evolution over time**
-* Identify:
-  * Undervalued listings
-  * Overpriced / “stuck” inventory
-  * Seller behavior patterns
-* Provide **visual, interpretable insights** via a Jupyter notebook
-* Allow users to **configure search parameters** via a simple HTML interface
+* Build a **repeatable dataset** of used car listings based on user-defined criteria
+* Normalize and enrich raw scraped data into analysis-ready tables
+* Apply analytical logic to rank, filter, and evaluate listings
+* Support a structured **buyer’s funnel** from broad market scan to a final purchase shortlist
+* Keep the system simple, inspectable, and easy to extend
 
-## 🧠 Key Questions This Project Answers
+The project intentionally avoids over-engineering and instead focuses on clarity, correctness, and real decision support.
 
-* What is a *fair market price* for a given car configuration?
-* How much does mileage really affect price?
-* Are imports priced differently than domestic cars?
-* Do dealers drop prices faster than private sellers?
-* Which listings are likely negotiable?
-* Which trims / engines offer the best value for money?
+---
 
-## 🔍 Data Sources & Extraction Strategy
+## High-level workflow
 
-The scraper extracts listings from **two independent structured sources** embedded in Otomoto pages:
+1. User selects car models and search parameters via a lightweight web UI
+2. Parameters are saved as a JSON configuration through a Flask backend
+3. The scraper runs using the provided configuration and saves a raw CSV snapshot
+4. A normalization step cleans, standardizes, and enriches the dataset
+5. Analysis is performed in Jupyter notebooks to guide buying decisions
 
-### 1️⃣ JSON-LD (`application/ld+json`)
+Each step produces explicit, versionable outputs to make debugging and iteration easy.
 
-* Provides:
-  * Title
-  * Brand & model
-  * Fuel type
-  * Mileage
-  * Price
-* Stable but limited
+---
 
-### 2️⃣ Embedded GraphQL (Next.js + URQL state)
+## Frontend
 
-* Provides:
-  * Internal advert ID
-  * Upload date
-  * Short description
-  * Advert URL
-  * Seller info
-  * Full parameters (engine, trim, gearbox, origin, year)
-  * Location
-  * Price evaluation badges
-  * CEPiK verification
-* Extracted via **double-decoded JSON**
+The frontend is intentionally minimal and static.
 
-The two sources are merged.
+* HTML for structure
+* CSS for basic layout
+* JavaScript for form handling and submission
 
-## 🧮 Feature Engineering & Calculated Columns
+Its role is not to be a full web application, but a **parameter selection interface** that allows non-technical input into the scraping pipeline.
 
-The analysis layer adds derived metrics such as:
+---
 
-* `price_per_1k_km`
-* `days_on_market`
-* `price_percentile`
-* `is_dealer`
-* Normalized engine & trim identifiers
-* Price deltas over time (for repeated scrapes)
+## Backend
 
-These features enable  **market-relative comparisons** , not just raw price sorting.
+The backend is written in Python and built around Flask.
 
-## 📊 Analysis & Visualization (Jupyter)
+Responsibilities include:
 
-The notebooks focus on  **decision-oriented insights** , including:
+* Receiving user input from the frontend
+* Persisting scraping configurations as JSON
+* Triggering scraping runs
+* Coordinating data output to disk
 
-* Price vs mileage scatter plots
-* Boxplots by engine power, trim, origin
-* Distribution of days on market
-* Identification of undervalued & overpriced listings
-* Seller behavior patterns
-* Time-based price trends
+The backend is designed to be transparent and observable, with all artifacts saved locally for inspection.
 
-The final notebook acts as a **lightweight analytical dashboard**.	
+---
 
-## 🖥 HTML UI (Scraper Configuration)
+## Data processing and normalization
 
-A simple HTML page allows the user to:
+Raw scraped listings are not immediately suitable for analysis. A dedicated normalization step:
 
-* Select:
-  * Brand & model
-  * Year range
-  * Price range
-  * Mileage limit
-  * Fuel type
-  * Gearbox
-  * Accident indicator
-* Trigger the scraper locally
-* Generate updated CSV
+* Cleans inconsistent fields
+* Standardizes naming and categories
+* Adds calculated convenience columns
+* Enriches geographic and technical attributes
 
-This is intentionally lightweight — the UI is a **parameter input layer**.
+The output is a processed CSV intended to be directly loaded into analytical notebooks.
 
-## ⚙️ Requirements
+---
 
-### Python version
+## Analysis and buyer’s funnel
 
-```
+All analysis lives in  **Jupyter notebooks** .
+
+The analytical workflow follows a buyer’s funnel approach:
+
+1. **Market overview**
+   Understand price ranges, mileage distributions, and model availability.
+2. **Filtering and constraints**
+   Apply geographic, technical, and trust-based filters (e.g. region, verification flags).
+3. **Value signals**
+   Use derived metrics such as price per kilometer, price per horsepower, and age-adjusted pricing.
+4. **Shortlisting**
+   Narrow the dataset to a small number of high-value candidates.
+5. **Decision support**
+   Explicit buy/no-buy flags, notes, and follow-up actions.
+
+The notebooks are designed to support  **human judgment** , not replace it.
+
+---
+
+## Requirements
+
 Python 3.10+
+
+Core libraries:
+
+* requests
+* beautifulsoup4
+* lxml
+* pandas
+* tqdm
+* flask
+* flask-cors
+
+Analysis:
+
+* jupyter
+* numpy
+* matplotlib
+* seaborn
+
+Install dependencies with:
+
 ```
-
-### Core dependencies
-
-```
-requests
-beautifulsoup4
-pandas
-numpy
-matplotlib
-jupyter
-pyarrow        # for Parquet support
-```
-
-Optional (future extensions):
-
-```
-scikit-learn   # price modeling
-plotly         # interactive dashboards
-```
-
-## 🚀 How to Run
-
-```bash
 pip install -r requirements.txt
-python run_scraper.py
 ```
 
-Then open:
+---
 
-```bash
-jupyter notebook
-```
+## Disclaimer
 
-and explore the notebooks in `notebooks/`.
+This project is intended for **educational and personal research purposes only**.
 
-## ⚠️ Disclaimer
+* It is not affiliated with otomoto or any related service
+* Scraping should always respect website terms of service
+* Use responsibly and ethically
 
-This project is for **educational and personal research purposes**.
-Always respect the target website’s terms of service and use reasonable rate limiting.
+The author takes no responsibility for misuse or violations of third-party policies.
 
-## 🧭 Roadmap / Future Ideas
+---
 
-* Automated fair-price model
-* Alerting for new undervalued listings
-* Negotiation score per listing
-* Multi-model comparison (Taigo vs Kamiq vs Kadjar)
+## Closing note
+
+This project started as a personal need — choosing the right car — and evolved into a complete data pipeline. It reflects a way to approach problems: start with a real question, build the tools to answer it, and iterate until the data tells a story.
